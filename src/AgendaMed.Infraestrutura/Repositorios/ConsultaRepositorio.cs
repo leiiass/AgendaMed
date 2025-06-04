@@ -1,33 +1,54 @@
 ﻿using AgendaMed.Dominio.Interfaces;
 using AgendaMed.Dominio.Modelos;
+using AgendaMed.Infraestrutura.BancoDeDados;
 
 namespace AgendaMed.Infraestrutura.Repositorios
 {
     public class ConsultaRepositorio : IConsultaRepositorio
     {
-        public void Atualizar(int id, Consulta consulta)
+        private readonly Context _context;
+        public ConsultaRepositorio(Context context)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Criar(Consulta consulta)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Consulta ObterPorId(int id)
-        {
-            throw new NotImplementedException();
+            _context = context;
         }
 
         public List<Consulta> ObterTodos()
         {
-            throw new NotImplementedException();
+            return _context.Consultas.ToList();
+        }
+
+        public Consulta ObterPorId(int id)
+        {
+            return _context.Consultas.FirstOrDefault(x => x.Id == id);
+        }
+
+        public void Criar(Consulta consulta)
+        {
+            _context.Consultas.Add(consulta);
+            _context.SaveChanges();
+        }
+
+        public void Atualizar(int id, Consulta consulta)
+        {
+            var consultaAhSerEditada = _context.Consultas.FirstOrDefault(x => x.Id == id)
+                ?? throw new Exception($"Não foi encontrado consulta com o id {id} no banco de dados.");
+
+            consultaAhSerEditada.DataHora = consulta.DataHora;
+            consultaAhSerEditada.Status = consulta.Status;
+            consultaAhSerEditada.MedicoId = consulta.MedicoId;
+            consultaAhSerEditada.PacienteId = consulta.PacienteId;
+            consultaAhSerEditada.Observacoes = consulta.Observacoes;
+            consultaAhSerEditada.EstabelecimentoId = consulta.EstabelecimentoId;
+            _context.Consultas.Update(consultaAhSerEditada);
+            _context.SaveChanges();
         }
 
         public void Remover(int id)
         {
-            throw new NotImplementedException();
+            var consultaAhSerRemovida = _context.Consultas.FirstOrDefault( x => x.Id == id) 
+                ?? throw new Exception($"Não foi encontrado consulta com o id {id} no banco de dados."); ;
+            _context.Consultas.Remove(consultaAhSerRemovida);
+            _context.SaveChanges();
         }
     }
 }
