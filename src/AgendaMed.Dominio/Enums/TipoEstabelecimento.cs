@@ -7,6 +7,8 @@ namespace AgendaMed.Dominio.Enums
         [Description ("Clínica")]
         Clinica = 0,
         [Description ("Hospital")]
-        Hospital = 1
+        Hospital = 1,
+        [Description("Laboratório")]
+        Laboratorio = 2,
     }
 }
